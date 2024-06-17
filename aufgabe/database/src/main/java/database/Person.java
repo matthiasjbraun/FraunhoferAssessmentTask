@@ -1,19 +1,20 @@
 package database;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
 @Entity
-@Table(name = "Person")
 public class Person implements Serializable {
     @Id
     private Integer id;
-    private String  name;
+    @NotNull
+    @Column(insertable = false, updatable = false)
+    private String name;
     private String username;
+    @Email
     private String email;
     @Embedded
     private Address address;

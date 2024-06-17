@@ -1,20 +1,22 @@
 package database;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Company {
-    private String name;
+    @Column(name="name")
+    private String companyName;
     private String catchPhrase;
     private String bs;
     public Company(){}
 
     public String getName() {
-        return name;
+        return companyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getBs() {
