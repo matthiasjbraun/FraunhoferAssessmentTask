@@ -14,11 +14,13 @@
 
 package org.eclipse.edc.extension.data;
 
-
+import com.google.gson.Gson;
 import database.Person;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.edc.spi.monitor.Monitor;
@@ -37,8 +39,22 @@ public class DataApiController {
     @GET
     @Path("data")
     public String checkHealth() {
-        Person person = new Person("hello from p");
         monitor.info("Received a request");
-        return person.getName();
+        return "working!";
+    }
+
+    @GET
+    @Path("data/person/{id}")
+    public String findPerson(@PathParam("id") String id) {
+        monitor.info("Received a request");
+        return id;
+    }
+
+    @POST
+    @Path("data")
+    public String readData(String json)  {
+        Gson gson = new Gson();
+        Person p = gson.fromJson(json, Person.class);
+        return "got the message?" + p.getName() + p.getAddress().getCity();
     }
 }
