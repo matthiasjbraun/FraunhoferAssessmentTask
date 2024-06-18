@@ -21,29 +21,11 @@ public class DataManager {
     }
     private void createValidator() {
         Validator validator = factory.getValidator();
-        validator.validate(Person.class);
-    }
-    /**
-     * persists a Person
-     * @param person Person Entity
-     */
-    public void persistPerson(Person person) {
-        EntityManager em = createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.persist(person);
-            em.getTransaction().commit();
-        } catch (PersistenceException pe) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-        } finally {
-            em.close();
-        }
+        //validator.validate(Person.class);
     }
 
     /**
-     * persists a List of Persons
+     * persists a List of persons
      * @param personList List of Person Entities
      */
     public void persistPerson(List<Person> personList) {
@@ -65,7 +47,7 @@ public class DataManager {
     }
 
     /**
-     *
+     * query the database for persons based on id
      * @param id id of the Person
      * @return List of Person
      */
@@ -74,16 +56,30 @@ public class DataManager {
         return em.createQuery("SELECT p FROM Person p WHERE p.id = ?1", Person.class).setParameter(1, id).getSingleResult();
     }
 
+    /**
+     * query the database for persons based on name
+     * @param name name of the Person
+     * @return List of Person
+     */
     public List<Person> findPersonWithName(String name) {
         EntityManager em = emf.createEntityManager();
-        return em.createQuery("SELECT p FROM Person p WHERE p.name = ?1", Person.class).setParameter(1, name).getResultList();
+        return em.createQuery("SELECT p FROM Person p WHERE p.name LIKE ?1", Person.class).setParameter(1, name).getResultList();
     }
 
-    public List<Person> findPersonWithAll(String id, String name) {
+    /**
+     * query the database for persons with optional query Parameters
+     * @param id id of the Person
+     * @param name name of the Person
+     * @return List of Person
+     */
+    public List<Person> findPersonWithAll(String id, String name, String username) {
         EntityManager em = emf.createEntityManager();
-        return em.createQuery("SELECT p FROM Person p WHERE p.id = ?1 OR p.name = ?2", Person.class)
+        return em.createQuery("SELECT p FROM Person p WHERE p.id = ?1"
+                        + "OR p.name LIKE ?2"
+                        + "OR p.username LIKE ?3", Person.class)
                 .setParameter(1, id)
                 .setParameter(2, name)
+                .setParameter(3, username)
                 .getResultList();
     }
 }

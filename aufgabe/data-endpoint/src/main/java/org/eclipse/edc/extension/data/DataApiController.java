@@ -15,6 +15,7 @@
 package org.eclipse.edc.extension.data;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import database.DataManager;
 import database.Person;
 import jakarta.ws.rs.Consumes;
@@ -26,8 +27,8 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.edc.spi.monitor.Monitor;
 
-@Consumes({MediaType.APPLICATION_JSON})
-@Produces({MediaType.APPLICATION_JSON})
+import java.util.List;
+
 @Path("/")
 public class DataApiController {
 
@@ -40,26 +41,32 @@ public class DataApiController {
     }
 
     @GET
+    @Produces(MediaType.TEXT_PLAIN)
     @Path("data")
-    public String checkHealth() {
-        monitor.info("Received a request");
+    public String checkStatus() {
+        monitor.info("Received a Status request");
         return "working!";
     }
 
     @GET
+    @Produces({MediaType.APPLICATION_JSON})
     @Path("data/person")
-    public String findPerson(@QueryParam("id") String id, @QueryParam("name") String name) {
-        monitor.info("Received a request");
-        return id + name;
+    public String findPerson(@QueryParam("id") String id, @QueryParam("name") String name,
+                             @QueryParam("username") String username) {
+        monitor.info("Received a GET Query request");
+        Gson gson = new Gson();
+        List<Person> personList = dataManager.findPersonWithAll(id, name, username);
+        return gson.toJson(personList);
     }
 
     @POST
+    @Consumes({MediaType.APPLICATION_JSON})
     @Path("data")
     public String persistData(String json)  {
-        monitor.info("Received a request");
+        monitor.info("Received a POST request");
         Gson gson = new Gson();
-        Person p = gson.fromJson(json, Person.class);
-        dataManager.persistPerson(p);
-        return "got the message?" + p.getName() + p.getAddress().getCity();
+        List<Person> personList = gson.fromJson(json, new TypeToken<List<Person>>(){}.getType());
+        dataManager.persistPerson(personList);
+        return "Received Request" + personList.get(0).getName() + personList.get(1).getName();
     }
 }

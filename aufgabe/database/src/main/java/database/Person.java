@@ -7,15 +7,21 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
+//@Table(name = "person")
 public class Person implements Serializable {
     @Id
     private Integer id;
+
     @NotNull
-    @Column(insertable = false, updatable = false)
     private String name;
+
+    @NotNull
     private String username;
+
+    @NotNull
     @Email
     private String email;
+
     @Embedded
     private Address address;
     private String phone;

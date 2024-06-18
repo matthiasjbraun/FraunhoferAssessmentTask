@@ -5,18 +5,18 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Company {
-    @Column(name="name")
-    private String companyName;
+    @Column(name = "companyName")
+    private String name;
     private String catchPhrase;
     private String bs;
     public Company(){}
 
     public String getName() {
-        return companyName;
+        return name;
     }
 
     public void setName(String companyName) {
-        this.companyName = companyName;
+        this.name = companyName;
     }
 
     public String getBs() {
